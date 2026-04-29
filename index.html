@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI2 教練 (網頁版)</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>AI2 教練（引導式除錯）</h1>
+      <p class="subtitle">
+        上傳 App Inventor 專案檔（.aia）或錯誤截圖，AI 不直接給答案，而是用提問方式引導學生思考。
+      </p>
+
+      <section class="card">
+        <h2>1) 設定你的 AI（免費方案）</h2>
+        <label>API Base URL（例如 OpenRouter）</label>
+        <input id="apiBase" placeholder="https://openrouter.ai/api/v1" />
+
+        <label>模型名稱（免費模型）</label>
+        <input id="model" placeholder="meta-llama/llama-3.1-8b-instruct:free" />
+
+        <label>API Key</label>
+        <input id="apiKey" type="password" placeholder="sk-..." />
+
+        <div class="row">
+          <button id="saveSettings">儲存設定</button>
+          <button id="testApi">測試連線</button>
+        </div>
+        <small id="settingsStatus"></small>
+      </section>
+
+      <section class="card">
+        <h2>2) 學生提交問題</h2>
+        <label>任務名稱</label>
+        <input id="taskName" placeholder="例如：按鈕點擊後 Label 沒更新" />
+
+        <label>問題描述</label>
+        <textarea id="problemDescription" rows="4" placeholder="請描述你目前看到的現象、你試過的方法..." ></textarea>
+
+        <label>上傳 .aia 或截圖（可多選）</label>
+        <input id="attachments" type="file" multiple accept=".aia,image/*" />
+
+        <button id="startCoach">開始引導</button>
+      </section>
+
+      <section class="card">
+        <h2>3) 引導對話</h2>
+        <div id="chatBox" class="chat-box"></div>
+        <div class="row">
+          <input id="studentReply" placeholder="學生回答或補充資訊..." />
+          <button id="sendReply">送出</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>4) 學習任務紀錄</h2>
+        <ul id="taskList"></ul>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
