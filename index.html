@@ -41,6 +41,11 @@
 
         <label>上傳 .aia 或截圖（可多選）</label>
         <input id="attachments" type="file" multiple accept=".aia,image/*" />
+        <label>或直接 Ctrl+V 貼上截圖</label>
+        <div id="pasteZone" class="paste-zone" tabindex="0">
+          點一下此區後，按 Ctrl+V 貼上螢幕截圖
+        </div>
+        <ul id="pastedList" class="pasted-list"></ul>
 
         <button id="startCoach">開始引導</button>
       </section>

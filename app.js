@@ -4,6 +4,39 @@ const TASKS_KEY = "ai2_coach_tasks";
 const el = (id) => document.getElementById(id);
 const chatBox = el("chatBox");
 let conversation = [];
+let pastedImages = [];
+
+function renderPastedList() {
+  const ul = el("pastedList");
+  ul.innerHTML = "";
+  pastedImages.forEach((img, i) => {
+    const li = document.createElement("li");
+    li.textContent = `${img.name} (${Math.round(img.file.size / 1024)} KB)`;
+    ul.appendChild(li);
+  });
+}
+
+function setupPasteZone() {
+  const zone = el("pasteZone");
+  zone.addEventListener("paste", (event) => {
+    const items = [...(event.clipboardData?.items || [])];
+    const imageItems = items.filter((it) => it.type.startsWith("image/"));
+    if (!imageItems.length) return;
+
+    imageItems.forEach((it, idx) => {
+      const file = it.getAsFile();
+      if (!file) return;
+      pastedImages.push({
+        name: `pasted_${Date.now()}_${idx}.png`,
+        file,
+      });
+    });
+    renderPastedList();
+    addMessage("assistant", "已收到貼上的截圖，請繼續描述問題。");
+    event.preventDefault();
+  });
+}
+
 
 function addMessage(role, text) {
   conversation.push({ role, text });
@@ -104,7 +137,9 @@ el("testApi").addEventListener("click", async () => {
 el("startCoach").addEventListener("click", async () => {
   const taskName = el("taskName").value.trim();
   const desc = el("problemDescription").value.trim();
-  const files = [...el("attachments").files].map((f) => f.name);
+  const uploadedFiles = [...el("attachments").files].map((f) => f.name);
+  const pastedFiles = pastedImages.map((p) => p.name);
+  const files = [...uploadedFiles, ...pastedFiles];
 
   if (!taskName || !desc) {
     alert("請填寫任務名稱與問題描述");
@@ -121,6 +156,9 @@ el("startCoach").addEventListener("click", async () => {
 
   addMessage("student", `任務：${taskName}\n問題：${desc}\n附件：${files.join(", ") || "無"}`);
   await callCoach(`任務：${taskName}\n問題：${desc}\n附件：${files.join(", ") || "無"}`);
+
+  pastedImages = [];
+  renderPastedList();
 });
 
 el("sendReply").addEventListener("click", async () => {
@@ -133,3 +171,4 @@ el("sendReply").addEventListener("click", async () => {
 
 loadSettings();
 renderTasks();
+setupPasteZone();
